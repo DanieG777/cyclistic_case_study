@@ -1,0 +1,39 @@
+---
+title: "Cyclistic Bike-Share Case Study"
+author: "Daniel G."
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r load-packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+
+cyclistic_df <- read_csv("output/cleaned_cyclistic_data.csv")
+
+cyclistic_df %>%
+  group_by(member_casual) %>%
+  summarise(
+    avg_ride_length = mean(ride_length),
+    median_ride_length = median(ride_length),
+    max_ride_length = max(ride_length),
+    min_ride_length = min(ride_length),
+    .groups = "drop"
+  )
+cyclistic_df %>%
+  group_by(member_casual, day_of_week) %>%
+  summarise(rides = n(), .groups = "drop") %>%
+  ggplot(aes(x = day_of_week, y = rides, fill = member_casual)) +
+  geom_col(position = "dodge") +
+  labs(title = "Number of Rides by Day of Week",
+       x = "Day", y = "Number of Rides") +
+  theme_minimal()
+cyclistic_df %>%
+  group_by(member_casual, day_of_week) %>%
+  summarise(avg_ride_length = mean(ride_length), .groups = "drop") %>%
+  ggplot(aes(x = day_of_week, y = avg_ride_length, fill = member_casual)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average Ride Length by Day of Week",
+       x = "Day", y = "Avg Ride Length (mins)") +
+  theme_minimal()
